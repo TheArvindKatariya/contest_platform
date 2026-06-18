@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contest.title }} Leaderboard - CP Platform{% endblock %}
+
+{% block content %}
+<div class="leaderboard-page">
+    <div class="leaderboard-header">
+        <h1>{{ contest.title }} - Leaderboard</h1>
+        <a href="{{ url_for('contests.view_contest', contest_id=contest.id) }}" class="btn btn-secondary">Back to Contest</a>
+    </div>
+
+    {% if leaderboard %}
+        <div class="leaderboard-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Username</th>
+                        <th>Submissions</th>
+                        <th>Accepted</th>
+                        <th>Total Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in leaderboard %}
+                        <tr {% if entry.id == session.user_id %}class="current-user"{% endif %}>
+                            <td class="rank">{{ loop.index }}</td>
+                            <td class="username">{{ entry.username }}</td>
+                            <td class="submissions">{{ entry.submissions or 0 }}</td>
+                            <td class="accepted">{{ entry.accepted or 0 }}</td>
+                            <td class="score">{{ entry.total_score or 0 }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="no-data">
+            <p>No participants yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

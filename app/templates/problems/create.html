@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Add Problem - {{ contest.title }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <h1>Add Problem to "{{ contest.title }}"</h1>
+        
+        {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form id="createProblemForm" method="POST" class="form-layout">
+            <div class="form-group">
+                <label for="title">Problem Title *</label>
+                <input type="text" id="title" name="title" required placeholder="Enter problem title">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description (Markdown supported)</label>
+                <textarea id="description" name="description" rows="6" placeholder="Enter problem description, constraints, and examples"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="difficulty">Difficulty *</label>
+                <select id="difficulty" name="difficulty" required>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="time_limit">Time Limit (seconds) *</label>
+                <input type="number" id="time_limit" name="time_limit" value="1" min="1" max="10" required>
+            </div>
+
+            <div class="form-group">
+                <label for="memory_limit">Memory Limit (MB) *</label>
+                <input type="number" id="memory_limit" name="memory_limit" value="256" min="16" max="1024" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add Problem</button>
+                <a href="{{ url_for('contests.view_contest', contest_id=contest.id) }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('createProblemForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(document.getElementById('createProblemForm'));
+        const data = Object.fromEntries(formData);
+        
+        // Convert numbers to integers
+        if (data.time_limit) data.time_limit = parseInt(data.time_limit);
+        if (data.memory_limit) data.memory_limit = parseInt(data.memory_limit);
+
+        try {
+            const response = await fetch('{{ url_for("problems.create_problem", contest_id=contest.id) }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Problem added successfully!');
+                window.location.href = '{{ url_for("contests.view_contest", contest_id=contest.id) }}';
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while adding the problem.');
+        }
+    });
+</script>
+{% endblock %}

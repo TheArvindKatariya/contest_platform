@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Contests - CP Platform{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Contests</h1>
+    <a href="{{ url_for('contests.create_contest') }}" class="btn btn-primary">Create Contest</a>
+</div>
+
+<div class="contests-grid">
+    {% if contests %}
+        {% for contest in contests %}
+            <div class="contest-card">
+                <div class="contest-header">
+                    <h2><a href="{{ url_for('contests.view_contest', contest_id=contest.id) }}">{{ contest.title }}</a></h2>
+                    <span class="contest-creator">By {{ contest.creator_name }}</span>
+                </div>
+                
+                <p class="contest-description">{{ contest.description[:150] }}...</p>
+                
+                <div class="contest-meta">
+                    <div class="meta-item">
+                        <span class="label">Start:</span>
+                        <span class="value">{{ contest.start_time }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="label">End:</span>
+                        <span class="value">{{ contest.end_time }}</span>
+                    </div>
+                </div>
+
+                <div class="contest-footer">
+                    {% if contest.id in registered %}
+                        <span class="badge badge-success">Registered</span>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('contests.register_contest', contest_id=contest.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-secondary">Register</button>
+                        </form>
+                    {% endif %}
+                    <a href="{{ url_for('contests.view_contest', contest_id=contest.id) }}" class="btn btn-sm btn-primary">View</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-data">
+            <p>No contests available. <a href="{{ url_for('contests.create_contest') }}">Create one now!</a></p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

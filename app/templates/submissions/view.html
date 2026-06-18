@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Submission - CP Platform{% endblock %}
+
+{% block content %}
+<div class="submission-detail">
+    <div class="submission-header">
+        <h1>Submission #{{ submission.id }}</h1>
+        <div class="submission-meta">
+            <div class="meta-item">
+                <span class="label">Submitted:</span>
+                <span class="value">{{ submission.submitted_at }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="label">Language:</span>
+                <span class="value">{{ submission.language }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="label">Status:</span>
+                <span class="value">
+                    <span class="status status-{{ submission.status.lower().replace(' ', '-') }}">
+                        {{ submission.status }}
+                    </span>
+                </span>
+            </div>
+            <div class="meta-item">
+                <span class="label">Score:</span>
+                <span class="value">{{ submission.score }}%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="submission-code">
+        <h2>Code</h2>
+        <pre><code>{{ submission.code }}</code></pre>
+    </div>
+
+    <div class="submission-actions">
+        <a href="{{ url_for('submissions.my_submissions') }}" class="btn btn-secondary">Back to Submissions</a>
+    </div>
+</div>
+{% endblock %}
